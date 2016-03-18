@@ -1,9 +1,9 @@
 # The Personal Website of Sean Bowman
 
-This is part of my site.  I don't keep the whole thing on here because I have
-lots of draft posts and experiments and stuff laying around.  It's enought to
-give an idea of how you can cobble together a decent blog with metalsmith,
-though, so I thought I'd share it.
+This is part of my site, http://seanbowman.me.  I don't keep the whole thing
+on here because I have lots of draft posts and experiments and stuff laying
+around.  It's enough to give an idea of how you can cobble together a decent
+blog with metalsmith, though, so I thought I'd share it.
 
 ## Metalsmith
 
@@ -22,4 +22,3 @@ my posts and adds the potential for other plugin style goodies.
 I have a small gulpfile for building, validating/linting, running a dev
 server, and deploying to s3.  It might also be useful if you're looking for
 simple ways to approach these tasks.
-
