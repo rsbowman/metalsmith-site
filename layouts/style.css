@@ -1,0 +1,153 @@
+body {
+  /* font-family: 'Crimson Text', serif; */
+  font-family: 'Merriweather', serif;
+  /* background: url(/images/concrete_wall.png) repeat; */
+}
+header {
+  margin: 1em 0;
+}
+
+hr.homepage {
+  border: 0;
+  height: 1px;
+  background: #d0d0d0;
+}
+
+hr.subtle {
+border: 0;
+height: 1px;
+background: #bababa;
+background-image: -webkit-linear-gradient(left, #f0f0f0, #bababa, #f0f0f0);
+background-image: -moz-linear-gradient(left, #f0f0f0, #bababa, #f0f0f0);
+background-image: -ms-linear-gradient(left, #f0f0f0, #bababa, #f0f0f0);
+background-image: -o-linear-gradient(left, #f0f0f0, #bababa, #f0f0f0);
+}
+
+.justified p, .justified li {
+  text-align: justify;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  hyphens: auto;
+}
+
+.word-count {
+  color: #a0a0a0;
+}
+
+.post-date {
+  float: right;
+}
+h1 {
+  font-size: 3.0em;
+  font-weight: normal;
+}
+h1.post-title a {
+  color: #000;
+}
+h1.post-title a:hover {
+  color: #005580;
+  text-decoration: underline;
+}
+h2 { font-size: 2.5em; }
+h3 { font-size: 2.0em; }
+h4 { font-size: 1.5em; }
+h5 { font-size: 1.2em; }
+h6 { font-size: 1.0em; }
+h1,h2,h3,h4,h5,h6 {
+  margin: 0.6em 0;
+  font-weight: normal;
+  line-height: 1.2em;
+}
+p {
+  font-size: 1em;
+  line-height: 1.6em;
+  margin: 1.3em 0;
+}
+
+.homepage-blurb h1, .homepage-blurb h2,
+.homepage-blurb h3, .homepage-blurb h4 {
+  margin: 0 0 0.3em 0;
+  line-height: 1.2em;
+}
+
+h2.card-title, h3.card-title, h4.card-title {
+  margin: 0 0 0.3em 0;
+}
+
+.homepage-blurb p:first-child {
+  margin-top: 0;
+}
+
+code {
+  font-family: 'Roboto Mono', monospace;
+}
+
+blockquote {
+  padding: 10px 20px;
+  margin: 0 0 20px;
+  font-size: 0.9em;
+  border-left: 5px solid #eee;
+}
+
+blockquote p {
+  margin: 0;
+}
+
+#nav-below {
+  margin: 1.3em 0;
+}
+
+footer p {
+  font-size: 1em;
+  margin: 0.5em 0;
+}
+
+footer ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+footer li {
+  float: left;
+  margin-right: 0.8em;
+}
+footer .copyright {
+  font-size: 0.9em;
+}
+.fa-lighter {
+  color: #5d5d5d;
+}
+
+.icon-list li {
+  padding: 0 0 5px 20px;
+  /* display: block; */
+  /* position: relative; */
+}
+
+.hljs {
+  color: #333;
+  border-top: 1px solid #d0d0d0;
+  border-bottom: 1px solid #d0d0d0;
+}
+
+.rsp-break {
+  display: block;
+}
+
+.light-text {
+  color: #b3b3b3;
+}
+
+@media screen and (max-width: 40em) {
+  #headshot {
+     width: 250px;
+  }
+
+  .list-sm-spacing li {
+    padding-bottom: 0.4em;
+  }
+
+  #myname, #mytagline {
+    text-align: center;
+  }
+}

@@ -1,0 +1,18 @@
+extends layout
+
+block header
+  +blogheader
+
+block main
+  .col-md-12
+    +article(title, date, path)
+      != contents
+    p.word-count
+      small Approx. #{word_count} words, plus code
+    if tags
+      ul.list-inline
+        each tag, index in tags
+          li.list-inline-item
+            i.fa.fa-tag.fa-lighter
+            a(href="/blog/tags/" + tagsUrlSafe[index] + "/")= tag + " "
+      hr.subtle

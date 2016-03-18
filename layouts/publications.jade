@@ -1,0 +1,34 @@
+extends layout
+
+block header
+  +mugshot
+
+block main
+  .row
+    hr.homepage
+  .row.homepage-blurb
+    .col-md-9.justified
+      h2 Publications
+      ul
+        each pub in publications
+          if pub.url
+            li.m-b-1 #{pub.authors}, <a href="#{pub.url}">#{pub.title}</a>. !{pub.info}.
+          else
+            li.m-b-1 #{pub.authors}, #{pub.title}.  !{pub.info}.
+
+      p See also my <a href="http://arxiv.org/a/bowman_r_1">author page</a>
+        | on the arXiv.
+
+      p Note that these are divided roughly into low dimensional topology,
+        | machine learning/topological data analysis, and some other miscellaneous
+        | math and computer science topics.  These have been among my primary interests for the
+        | past decade or so.
+
+      h2 Talks
+      ul.list-unstyled.icon-list.circle
+        each talk in talks
+          li #{talk[0]}, #{talk[1]}.<span class="pull-right">#{talk[2]}</span>
+
+    +sidebar
+  .row
+    hr.homepage

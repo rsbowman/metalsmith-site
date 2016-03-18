@@ -1,0 +1,24 @@
+extends layout
+
+block header
+  +blogheader
+
+block main
+  each article in pagination.files
+    .col-md-12
+      +article(article.title, article.date, article.path)
+        != article.excerpt
+        p
+          a(href="/" + article.path) Read more...
+      hr.subtle
+
+  if pagination.previous || pagination.next
+    nav
+      ul.pager
+        if pagination.previous
+          li
+            a(href="/" + pagination.previous.path) Newer
+        if pagination.next
+          li
+            a(href="/" + pagination.next.path) Older
+

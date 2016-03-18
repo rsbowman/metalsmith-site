@@ -1,0 +1,15 @@
+//- tag.jade
+extends layout
+
+block header
+  +blogheader
+
+block main
+  .col-md-12
+    h3 Posts with tag &ldquo;#{tag}&rdquo;
+  each article in pagination.files
+    .col-md-12
+      +article(article.title, article.date, article.path)
+        != article.excerpt
+        p
+          a(href="/" + article.path) Read more...

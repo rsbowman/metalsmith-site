@@ -1,0 +1,15 @@
+extends layout
+
+block header
+  +mugshot
+
+block main
+  .row
+    hr.homepage
+  .row.justified.homepage-blurb
+    .col-md-9
+      != contents
+    +sidebar
+
+  .row
+    hr.homepage
