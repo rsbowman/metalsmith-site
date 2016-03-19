@@ -79,8 +79,7 @@ handlebars.registerHelper("centered_figure", centered_figure);
 
 // plugin to set basename to filename w/o extension
 function basename() {
-  return function(files, ms, done) {
-    setImmediate(done);
+  return function(files) {
     Object.keys(files).forEach(file => {
       const parts = path.parse(file);
       files[file].basename = parts.name;
