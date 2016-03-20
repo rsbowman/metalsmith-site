@@ -54,25 +54,33 @@ gulp.task("htmllint", ["metalsmith"], () => {
 });
 
 gulp.task("links", (done) => {
+  let n_checked = 0, n_errors = 0;
+
   function report_link(link) {
     gutil.log("Bad link: " + link.url + " from " + link.referrer +
               " got HTTP " + link.stateData.code);
+    n_errors += 1;
   }
 
-  gulp.on("stop", browser_sync.exit);
+  gulp.doneCallback = function (err) {
+    browser_sync.exit();
+    gutil.log("Checked " + n_checked + " links");
+    process.exit((err || n_errors > 0) ? 1 : 0);
+  };
 
   function crawl_links() {
     const c = crawler.crawl("http://localhost:3000");
     c.filterByDomain = false;
-    c.interval = 100;
-    c.maxConcurrency = 10;
+    c.interval = 10;
+    c.maxConcurrency = 50;
 
     c.addFetchCondition(function(parsedUrl, queueItem) {
       return (queueItem.host == c.host && !parsedUrl.path.match(/\.pdf$/i) &&
               !parsedUrl.path.match(/\.js$/i));
     });
 
-    c.on("fetcherror",report_link)
+    c.on("fetchcomplete", () => { n_checked += 1; })
+      .on("fetcherror",report_link)
       .on("fetch404", report_link)
       .on("fetch410", report_link)
       .on("complete", () => {

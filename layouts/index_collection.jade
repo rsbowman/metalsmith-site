@@ -1,0 +1,14 @@
+extends layout
+
+block header
+  +blogheader
+
+block main
+  h2= title
+  != contents
+
+  ul
+    each article in series_files
+      li
+        a(href="/" + article.path)= article.title
+
