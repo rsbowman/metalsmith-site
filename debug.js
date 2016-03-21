@@ -9,7 +9,8 @@ module.exports = function debug(msg, options) {
     if (options.long) {
       Object.keys(files).forEach(
         file => {
-          const file_data = _.omit(files[file], ["stats", "previous", "next"])
+          const to_omit = ["stats", "previous", "next", "meta"].concat(options.omit || []);
+          const file_data = _.omit(files[file], to_omit);
           console.log("file:", file);
           console.log("data:", util.inspect(file_data));
           if (options.show_md && file.endsWith("md")) {

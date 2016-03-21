@@ -8,7 +8,7 @@ block main
   != contents
 
   ul
-    each article in series_files
+    each article in pagination.files
       li
-        a(href="/" + article.path)= article.title
+        a(href="?" + article.path)= article.title
 

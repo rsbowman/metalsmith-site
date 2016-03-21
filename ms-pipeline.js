@@ -79,6 +79,8 @@ function centered_figure(name, alt_text, width) {
 }
 
 handlebars.registerHelper("centered_figure", centered_figure);
+handlebars.registerHelper("inspect", util.inspect);
+handlebars.registerHelper("inspect_keys", (obj) => { return util.inspect(_.keys(obj)); });
 
 // plugin to set basename to filename w/o extension
 function basename() {
@@ -90,49 +92,11 @@ function basename() {
   };
 }
 
-function series(_opts) {
-  const opts = _opts || {};
-  const collection_dir = opts.directory || "series",
-    index_collection = opts.index || "posts", // collection to put index file in
-    layout = opts.layout || "index_collection.jade";
-
-  return function(files) {
-    const collections = {},
-      index_files = {};
+// plugin to add ms metadata for handlebars use
+function add_metadata() {
+  return (files, metalsmith) => {
     Object.keys(files).forEach(file => {
-      const parts = path.parse(file),
-        dir_cpts = parts.dir.split(path.sep);
-      const cd_idx = dir_cpts.lastIndexOf(collection_dir);
-      if (cd_idx >= 0) {
-        const series = dir_cpts[cd_idx + 1];
-        files[file].collection = series;
-        collections[series] = collections[series] || [];
-        if (parts.name === "index") {
-          files[file].collection = index_collection;
-          index_files[series] = file;
-        } else {
-          collections[series].push(files[file]);
-        }
-      }
-    });
-
-    Object.keys(collections).forEach(series => {
-      collections[series].sort((a, b) => {
-        a = a.date;
-        b = b.date;
-        if (!a && !b) return 0;
-        if (!a) return -1;
-        if (!b) return 1;
-        if (b > a) return -1;
-        if (a > b) return 1;
-        return 0;
-      });
-    });
-
-    Object.keys(collections).forEach(series => {
-      files[index_files[series]].series_files = collections[series];
-      files[index_files[series]].layout = layout;
-      files[index_files[series]].basename = series;
+      files[file].meta = metalsmith._metadata;
     });
   };
 }
@@ -141,7 +105,7 @@ module.exports = function(done) {
   metalsmith(__dirname)
   .source("source")
   .destination("site")
-  .metadata({}) // put something here maybe?
+  // .metadata({}) // put something here maybe?
   .use(timer("init"))
   .use(metadata({
     publications: "metadata/publications.json",
@@ -152,27 +116,22 @@ module.exports = function(done) {
   .use(timer("metadata, ignore, drafts"))
   .use(basename())
   .use(timer("basename"))
-  .use(series())
-  .use(timer("series"))
   .use(collections({
-    posts: {
+    blog: {
       pattern: "blog/**/*.md",
       sortBy: "date",
       reverse: true
     },
-    // cpp_concurrency: {
-    //   pattern: "collections/cpp_concurrency/*.md",
-    //   sortBy: "date",
-    //   metadata: {
-    //     name: "Concurrency in C++",
-    //     description: "A short series of articles on concurrency in C++"
-    //   }
-    // }
+    cpp_concurrency: {
+      pattern: "series/cpp_concurrency/*.md",
+      sortBy: "date",
+    }
   }))
-  .use(debug("after collection", {keys: ["title", "collection", "path"]}))
   .use(timer("collections"))
+  .use(add_metadata())
+  .use(timer("add_meta"))
   .use(inplace({
-    pattern: "blog/**/*.md",
+    pattern: ["blog/**/*.md", "series/**/*.md"],
     engine: "handlebars",
   }))
   .use(timer("inplace"))
@@ -197,54 +156,55 @@ module.exports = function(done) {
     skipMetadata: true
   }))
   .use(timer("tags"))
-  .use(permalinks({
-    pattern: ":basename",
-    relative: false,
-    linksets: [{
-      match: { collection: "posts" },
-      pattern: "blog/:basename"
-    },
-    {
-      match: { collection: "cpp_concurrency" },
-      pattern: "blog/:basename"
-    }]
-  }))
-  .use(timer("permalinks"))
-  .use(debug("after collection", {long: true})) //keys: ["title", "collection", "path"]}))
   .use(pagination({
-    "collections.posts": {
-      perPage: 10,
+    "collections.blog": {
+      perPage: 6,
       layout: "index_paginate.jade",
       first: "blog/index.html",
       path: "blog/page/:num/index.html"
     },
-    // "collections.cpp_concurrency": {
-    //   perPage: 100,
-    //   layout: "index_collection.jade",
-    //   first: "blog/cpp-concurrency/index.html",
-    //   path: "blog/cpp-concurrency/page/:num/index.html"
-    // }
+    "collections.cpp_concurrency": {
+      perPage: 1000,
+      layout: "index_collection.jade",
+      first: "blog/cpp_concurrency/index.html",
+      path: "fake"
+    }
   }))
   .use(timer("pagination"))
+  .use(permalinks({
+    pattern: ":basename",
+    relative: false,
+    linksets: [{
+      match: { collection: "blog" },
+      pattern: "blog/:basename"
+    },
+    {
+      match: { collection: "cpp_concurrency" },
+      pattern: "cpp_concurrency/:basename"
+    }]
+  }))
+  .use(timer("permalinks"))
   .use(layouts({
-    pattern: ["**", "!blog/**/*.html"],
+    pattern: ["**", "!blog/**/*", "!cpp_concurrency/**/*"],
     engine: "jade",
     directory: "layouts",
     moment: moment,
-    inspect: util.inspect
+    inspect: util.inspect,
+    "_": _
   }))
   .use(timer("layouts1"))
   .use(layouts({
-    pattern: "blog/**/*.html",
+    pattern: ["blog/**/*.html", "cpp_concurrency/**/*.html"],
     default: "article.jade",
     engine: "jade",
     directory: "layouts",
     moment: moment,
-    inspect: util.inspect
+    inspect: util.inspect,
+    "_": _
   }))
   .use(timer("layouts"))
   .use(feed({
-    collection: "posts",
+    collection: "blog",
     destination: "blog/feed.xml",
     site_url: "http://seanbowman.me/",
     title: "Software! Math! Data!",

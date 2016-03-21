@@ -4,21 +4,26 @@ block header
   +blogheader
 
 block main
-  each article in pagination.files
+  .row
+    each article in pagination.files
+      .col-md-12
+        +article_excerpt(article.title, article.date, article.path)
+          != article.excerpt
+          p
+            a(href="/" + article.path) Read more...
+        hr.subtle
+
+  .row
     .col-md-12
-      +article(article.title, article.date, article.path)
-        != article.excerpt
-        p
-          a(href="/" + article.path) Read more...
-      hr.subtle
-
-  if pagination.previous || pagination.next
-    nav
-      ul.pager
-        if pagination.previous
-          li
-            a(href="/" + pagination.previous.path) Newer
-        if pagination.next
-          li
-            a(href="/" + pagination.next.path) Older
-
+      nav
+        .text-xs-center
+          ul.pagination.pagination-lg
+            li.page-item(class=pagination.previous ? "" : "disabled")
+                a.page-link(href="/" + _.get(pagination.previous, "path", "#"))
+                  span.fa.fa-chevron-left
+            each page in pagination.getPages(5)
+              li.page-item(class=page.pagination.index == pagination.index ? "active" : "")
+                a.page-link(href="/" + page.path)= page.pagination.num
+            li.page-item(class=pagination.next ? "" : "disabled")
+                a.page-link(href="/" + _.get(pagination.next, "path", "#"))
+                  span.fa.fa-chevron-right
