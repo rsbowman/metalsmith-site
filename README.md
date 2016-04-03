@@ -10,7 +10,7 @@ blog with metalsmith, though, so I thought I'd share it.
 The blog mostly uses metalsmith, a cool, small framework for creating static
 sites and other stuff.  I use jade for templates, and a little handlebars for
 "inline" templating, which is to say being able to use little functions and
-helpers in my markdown posts.  
+helpers in my markdown posts.
 
 I migrated the blog from a middleman site, and to keep the URLs the same,
 I wrote a tiny custom plugin to grab the base file name of the blog posts.

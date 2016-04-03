@@ -1,5 +1,6 @@
 body {
   font-family: 'Merriweather', serif;
+  font-size: 20px;
 }
 header {
   margin: 1em 0 2em 0;
@@ -140,7 +141,7 @@ footer .copyright {
   color: #b3b3b3;
 }
 
-@media screen and (max-width: 40em) {
+@media screen and (max-width: 768px) {
   #headshot {
      width: 250px;
   }
@@ -154,3 +155,32 @@ footer .copyright {
   }
 }
 
+.icon-fixed-width {
+  width: 1.28571429em;
+  text-align: center;
+}
+
+/* uhh, experimental */
+.wf-loading * {
+    /*
+    first things first, we need to hide everything,
+    but bear in mind that this will only take effect
+    once the loading script has taken effect.
+    here we're hiding all content within
+    the <html> once it has the class "wf-loading"
+    */
+    /* opacity: 0; */
+}
+
+.wf-active *, 
+.wf-inactive * {
+    /*
+    add some transitional effects
+    to reintroduce the content
+    gradually once fonts are loaded
+    */
+    /* -webkit-transition: opacity 1s ease-out; */  
+    /* -moz-transition: opacity 1s ease-out; */ 
+    /* -o-transition: opacity 1s ease-out; */  
+    /* transition: opacity 1s ease-out; */  
+}

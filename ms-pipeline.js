@@ -75,7 +75,7 @@ function centered_figure(name, alt_text, width) {
   return ['<img class="img-fluid center-block"',
     'style="width: ' + width + '; height: auto;"',
     'alt="' + alt_text + '"',
-    'src="/images/figures/' + name + '">'].join(" ");
+    'src="/assets/images/figures/' + name + '">'].join(" ");
 }
 
 handlebars.registerHelper("centered_figure", centered_figure);
@@ -101,122 +101,134 @@ function add_metadata() {
   };
 }
 
-module.exports = function(done) {
-  metalsmith(__dirname)
-  .source("source")
-  .destination("site")
-  // .metadata({}) // put something here maybe?
-  .use(timer("init"))
-  .use(metadata({
-    publications: "metadata/publications.json",
-    talks: "metadata/talks.yaml"
-  }))
-  .use(ignore("metadata"))
-  .use(drafts())
-  .use(timer("metadata, ignore, drafts"))
-  .use(basename())
-  .use(timer("basename"))
-  .use(collections({
-    blog: {
-      pattern: "blog/**/*.md",
-      sortBy: "date",
-      reverse: true
-    },
-    cpp_concurrency: {
-      pattern: "series/cpp_concurrency/*.md",
-      sortBy: "date",
-    }
-  }))
-  .use(timer("collections"))
-  .use(add_metadata())
-  .use(timer("add_meta"))
-  .use(inplace({
-    pattern: ["blog/**/*.md", "series/**/*.md"],
-    engine: "handlebars",
-  }))
-  .use(timer("inplace"))
-  .use(markdown())
-  .use(timer("markdown"))
-  .use(wordcount({
-    metaKeyCount: "word_count",
-    metaKeyReadingTime: "reading_time",
-    speed: 200,
-    seconds: false,
-    raw: false
-  }))
-  .use(timer("wordcount"))
-  .use(excerpts())
-  .use(timer("excerpts"))
-  .use(tags({
-    handle: "tags",
-    path: "blog/tags/:tag.html",
-    layout: "tag.jade",
-    sortBy: "date",
-    reverse: true,
-    skipMetadata: true
-  }))
-  .use(timer("tags"))
-  .use(pagination({
-    "collections.blog": {
-      perPage: 6,
-      layout: "index_paginate.jade",
-      first: "blog/index.html",
-      path: "blog/page/:num/index.html"
-    },
-    "collections.cpp_concurrency": {
-      perPage: 1000,
-      layout: "index_collection.jade",
-      first: "blog/cpp_concurrency/index.html",
-      path: "fake"
-    }
-  }))
-  .use(timer("pagination"))
-  .use(permalinks({
-    pattern: ":basename",
-    relative: false,
-    linksets: [{
-      match: { collection: "blog" },
-      pattern: "blog/:basename"
-    },
-    {
-      match: { collection: "cpp_concurrency" },
-      pattern: "cpp_concurrency/:basename"
-    }]
-  }))
-  .use(timer("permalinks"))
-  .use(layouts({
-    pattern: ["**", "!blog/**/*", "!cpp_concurrency/**/*"],
-    engine: "jade",
-    directory: "layouts",
-    moment: moment,
-    inspect: util.inspect,
-    "_": _
-  }))
-  .use(timer("layouts1"))
-  .use(layouts({
-    pattern: ["blog/**/*.html", "cpp_concurrency/**/*.html"],
-    default: "article.jade",
-    engine: "jade",
-    directory: "layouts",
-    moment: moment,
-    inspect: util.inspect,
-    "_": _
-  }))
-  .use(timer("layouts"))
-  .use(feed({
-    collection: "blog",
-    destination: "blog/feed.xml",
-    site_url: "http://seanbowman.me/",
-    title: "Software! Math! Data!",
-    description: "The website of R. Sean Bowman",
-    author: "R. Sean Bowman"
-  }))
-  .use(timer("feed"))
-  .build(function (err) {
-    if (err) {
-      done(err);
+function fake_plugin() {
+  return (files) => {};
+}
+
+module.exports = function(production_mode, done) {
+  function is_prod(plugin) {
+    if (production_mode) {
+      return plugin;
     } else {
-      done();
+      return fake_plugin();
     }
-  });
+  }
+
+  metalsmith(__dirname)
+    .source("source")
+    .destination("site")
+    // .metadata({}) // put something here maybe?
+    .use(timer("init"))
+    .use(metadata({
+      publications: "metadata/publications.json",
+      talks: "metadata/talks.yaml"
+    }))
+    .use(ignore(["metadata/*", "assets/raw/**/*"]))
+    .use(is_prod(drafts()))
+    .use(timer("metadata, ignore, drafts"))
+    .use(basename())
+    .use(timer("basename"))
+    .use(collections({
+      blog: {
+        pattern: "blog/**/*.md",
+        sortBy: "date",
+        reverse: true
+      },
+      cpp_concurrency: {
+        pattern: "series/cpp_concurrency/*.md",
+        sortBy: "date",
+      }
+    }))
+    .use(timer("collections"))
+    .use(add_metadata())
+    .use(timer("add_meta"))
+    .use(inplace({
+      pattern: ["blog/**/*.md", "series/**/*.md"],
+      engine: "handlebars",
+    }))
+    .use(timer("inplace"))
+    .use(markdown())
+    .use(timer("markdown"))
+    .use(wordcount({
+      metaKeyCount: "word_count",
+      metaKeyReadingTime: "reading_time",
+      speed: 200,
+      seconds: false,
+      raw: false
+    }))
+    .use(timer("wordcount"))
+    .use(excerpts())
+    .use(timer("excerpts"))
+    .use(tags({
+      handle: "tags",
+      path: "blog/tags/:tag.html",
+      layout: "tag.jade",
+      sortBy: "date",
+      reverse: true,
+      skipMetadata: true
+    }))
+    .use(timer("tags"))
+    .use(pagination({
+      "collections.blog": {
+        perPage: 6,
+        layout: "index_paginate.jade",
+        first: "blog/index.html",
+        path: "blog/page/:num/index.html"
+      },
+      "collections.cpp_concurrency": {
+        perPage: 1000,
+        layout: "index_collection.jade",
+        first: "blog/cpp_concurrency/index.html",
+        path: "fake"
+      }
+    }))
+    .use(timer("pagination"))
+    .use(permalinks({
+      pattern: ":basename/",
+      relative: false,
+      linksets: [{
+        match: { collection: "blog" },
+        pattern: "blog/:basename/"
+      },
+      {
+        match: { collection: "cpp_concurrency" },
+        pattern: "cpp_concurrency/:basename/"
+      }]
+    }))
+    .use(timer("permalinks"))
+    .use(layouts({
+      pattern: ["**", "!blog/**/*", "!cpp_concurrency/**/*"],
+      engine: "jade",
+      directory: "layouts",
+      moment: moment,
+      inspect: util.inspect,
+      "_": _
+    }))
+    .use(timer("layouts1"))
+    .use(layouts({
+      pattern: ["blog/**/*.html", "cpp_concurrency/**/*.html"],
+      default: "article.jade",
+      engine: "jade",
+      directory: "layouts",
+      moment: moment,
+      inspect: util.inspect,
+      "_": _
+    }))
+    .use(timer("layouts"))
+    .use(feed({
+      collection: "blog",
+      destination: "blog/feed.xml",
+      site_url: "http://seanbowman.me/",
+      title: "Software! Math! Data!",
+      description: "The website of R. Sean Bowman",
+      author: "R. Sean Bowman"
+    }))
+    .use(timer("feed"))
+    .build(function (err) {
+      if (err) {
+        done(err);
+      } else {
+        done();
+      }
+    });
 }

@@ -23,7 +23,7 @@ block main
                   span.fa.fa-chevron-left
             each page in pagination.getPages(5)
               li.page-item(class=page.pagination.index == pagination.index ? "active" : "")
-                a.page-link(href="/" + page.path)= page.pagination.num
+                a.page-link(href="/" + page.path + "/")= page.pagination.num
             li.page-item(class=pagination.next ? "" : "disabled")
                 a.page-link(href="/" + _.get(pagination.next, "path", "#"))
                   span.fa.fa-chevron-right

@@ -9,7 +9,7 @@ block main
     h3 Posts with tag &ldquo;#{tag}&rdquo;
   each article in pagination.files
     .col-md-12
-      +article(article.title, article.date, article.path)
+      +article_excerpt(article.title, article.date, article.path)
         != article.excerpt
         p
           a(href="/" + article.path) Read more...
