@@ -94,24 +94,8 @@ mixin mugshot
 doctype html
 html
   head
+    link(href="https://fonts.googleapis.com/css?family=Merriweather|Roboto", rel="stylesheet", type="text/css")
     link(href="/assets/css/styles.min.css", rel="stylesheet", type="text/css")
-    script(async, src="/assets/js/scripts.min.js")
-    script.
-      WebFontConfig = {
-        google: { families: [ "Merriweather::latin", "Roboto::latin" ] },
-        active: function() {
-          $("body").flowtype({
-            minimum   : 500,
-            maximum   : 1200,
-            minFont   : 14,
-            maxFont   : 24,
-            fontRatio : 40
-          });
-          $("#myname").fitText();
-          hljs.initHighlightingOnLoad();
-          anchors.add(".page-content h1,.page-content h2,.page-content h3,.page-content h4,.page-content h5");
-        }
-      };
     meta(charset="utf-8")
     meta(http-equiv="X-UA-Compatible", content="IE=Edge")
     meta(name="viewport", content="width=device-width, initial-scale=1")
@@ -192,6 +176,19 @@ html
           small
             | This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
             | Creative Commons Attribution 4.0 International License</a>.
+
+    script(src="/assets/js/scripts.min.js")
+    script.
+      $("body").flowtype({
+        minimum   : 500,
+        maximum   : 1200,
+        minFont   : 14,
+        maxFont   : 24,
+        fontRatio : 40
+      });
+      $("#myname").fitText();
+      hljs.initHighlightingOnLoad();
+      anchors.add(".page-content h1,.page-content h2,.page-content h3,.page-content h4,.page-content h5");
 
     script(type="text/javascript").
       var clicky_site_ids = clicky_site_ids || [];

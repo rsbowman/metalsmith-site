@@ -105,9 +105,9 @@ function fake_plugin() {
   return (files) => {};
 }
 
-module.exports = function(production_mode, done) {
-  function is_prod(plugin) {
-    if (production_mode) {
+module.exports = function(dev_mode, done) {
+  function is_dev(plugin) {
+    if (dev_mode) {
       return plugin;
     } else {
       return fake_plugin();
@@ -124,7 +124,7 @@ module.exports = function(production_mode, done) {
       talks: "metadata/talks.yaml"
     }))
     .use(ignore(["metadata/*", "assets/raw/**/*"]))
-    .use(is_prod(drafts()))
+    .use(is_dev(drafts()))
     .use(timer("metadata, ignore, drafts"))
     .use(basename())
     .use(timer("basename"))
@@ -202,7 +202,8 @@ module.exports = function(production_mode, done) {
       directory: "layouts",
       moment: moment,
       inspect: util.inspect,
-      "_": _
+      "_": _,
+      pagination_classes: pagination_classes
     }))
     .use(timer("layouts1"))
     .use(layouts({
@@ -212,7 +213,8 @@ module.exports = function(production_mode, done) {
       directory: "layouts",
       moment: moment,
       inspect: util.inspect,
-      "_": _
+      "_": _,
+      pagination_classes: pagination_classes
     }))
     .use(timer("layouts"))
     .use(feed({
@@ -231,4 +233,19 @@ module.exports = function(production_mode, done) {
         done();
       }
     });
+}
+
+function pagination_classes(this_index, page_index) {
+  // assume 5 entries
+  const classes = [];
+  if (this_index === page_index) {
+    classes.push("active");
+  }
+
+  if (((0 < this_index && this_index < 4) && Math.abs(page_index - this_index) > 1) ||
+      ((this_index === 0 || this_index === 4) && Math.abs(page_index - this_index) > 2)) {
+    classes.push("hidden-sm-down");
+  }
+
+  return classes.join(" ");
 }

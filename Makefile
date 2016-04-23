@@ -7,7 +7,7 @@ ASSETS_RAW_CSS_DIR=source/assets/raw/css
 
 ASSETS_JS_DIR=source/assets/js
 ASSETS_RAW_JS_DIR=source/assets/raw/js
-ASSETS_JS_FILES=jquery.min.js webfont.js flowtype.min.js highlight.pack.js jquery.fittext.js anchor.min.js
+ASSETS_JS_FILES=jquery.min.js flowtype.min.js highlight.pack.js jquery.fittext.js anchor.min.js
 
 include config.mk
 
@@ -36,7 +36,7 @@ reload: build
 start: ${SERVER_PID_FILENAME}
 
 ${SERVER_PID_FILENAME}:
-	{ http-server site & echo $$! >  $@; }
+	{ http-server site & echo $$! > $@; }
 
 stop: ${SERVER_PID_FILENAME}
 	kill `cat $<` && rm $<
@@ -46,12 +46,14 @@ serve:
 	onchange 'source/**' -- make reload
 
 check: start
-	#killall http-server browser-sync 2>&1 > /dev/null || true
-	#http-server site &
 	linkchecker -t 1 http://127.0.0.1:8080 1>&2
-	kill `cat ${SERVER_PID_FILENAME}` && rm ${SERVER_PID_FILENAME}
+	make stop
 
 validate: ${SITE_HTML_FILES}
 	echo $^ | xargs java -jar ~/src/vnu/dist/vnu.jar  --errors-only
 
+deploy: build
+	s3cmd sync site/ s3://seanbowman.me/ --acl-public --cf-invalidate --no-mime-magic -M
 
+dryrun: build
+	s3cmd sync site/ s3://seanbowman.me/ --acl-public --cf-invalidate --no-mime-magic -M --dry-run

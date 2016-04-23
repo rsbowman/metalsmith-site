@@ -19,11 +19,21 @@ block main
         .text-xs-center
           ul.pagination.pagination-lg
             li.page-item(class=pagination.previous ? "" : "disabled")
+              if pagination.previous
                 a.page-link(href="/" + _.get(pagination.previous, "path", "#"))
                   span.fa.fa-chevron-left
-            each page in pagination.getPages(5)
-              li.page-item(class=page.pagination.index == pagination.index ? "active" : "")
-                a.page-link(href="/" + page.path + "/")= page.pagination.num
+              else
+                span.page-link
+                  span.fa.fa-chevron-left
+            - var this_index = pagination.index
+              each page in pagination.getPages(5)
+                - var page_index = page.pagination.index
+                  li.page-item(class=pagination_classes(this_index, page_index))
+                    a.page-link(href="/" + page.path + "/")= page.pagination.num
             li.page-item(class=pagination.next ? "" : "disabled")
+              if pagination.next
                 a.page-link(href="/" + _.get(pagination.next, "path", "#"))
+                  span.fa.fa-chevron-right
+              else
+                span.page-link
                   span.fa.fa-chevron-right

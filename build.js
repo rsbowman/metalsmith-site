@@ -2,7 +2,7 @@
 
 const build = require("./ms-pipeline.js")
 
-build(false, (err) => {
+build(true, (err) => {
   if (err) {
     console.log(err);
     process.exit(1);
