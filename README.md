@@ -17,8 +17,7 @@ I wrote a tiny custom plugin to grab the base file name of the blog posts.
 Also, I use a customized version of markdown-it that let's me use MathJax in
 my posts and adds the potential for other plugin style goodies.
 
-## Gulp
+## Makefile
 
-I have a small gulpfile for building, validating/linting, running a dev
-server, and deploying to s3.  It might also be useful if you're looking for
-simple ways to approach these tasks.
+The website is built using make.  I switched from Gulp because it's dumb.
+The targets should be pretty obvious.
